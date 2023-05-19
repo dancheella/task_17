@@ -1,6 +1,6 @@
-import { Person } from './person';
+import {Person} from './person.js';
 
-class Worker extends Person {
+export class Worker extends Person {
   #rate;
   #days;
 
@@ -41,15 +41,15 @@ class Worker extends Person {
 
   getSalary() {
     const currentDate = new Date();
-    const currentMonth = currentDate.getMonth();
-    const birthMonth = this.birthday.getMonth();
+    const currentMonth = currentDate.getMonth() + 1;
+    const birthMonth = parseInt(this.birthday.split('.')); // извлекаем месяц рождения из строки с датой рождения
 
     let bonus = 0;
     if (birthMonth === currentMonth) {
-      bonus = 0.1 * this.#rate * this.#days;
+      bonus = 0.1 * this.rate * this.#days;
     }
 
-    return this.#rate * this.#days + bonus;
+    return this.rate * this.#days + bonus;
   }
 
   static whoWorkedMore(workers) {
@@ -69,10 +69,8 @@ class Worker extends Person {
     if (workersWithMaxDays.length === 1) {
       console.log(`Больше всех отработал ${workersWithMaxDays[0].getFullName()}. Количество рабочих дней - ${maxDaysWorked}`);
     } else {
-      console.log(`Несколько работников отработали одинаковое количество дней - ${maxDaysWorked}:`);
-      for (const worker of workersWithMaxDays) {
-        console.log(worker.getFullName()); // выводим имена работников с одинаковым максимальным количеством дней
-      }
+      const workerNames = workersWithMaxDays.map(worker => worker.getFullName());
+      console.log(`Несколько работников отработали одинаковое количество дней - ${maxDaysWorked}: ` + workerNames.join(', '));
     }
   }
 
@@ -80,10 +78,12 @@ class Worker extends Person {
     let minAge = Infinity;
     let youngestWorkers = [];
 
+    // поиск работников которое являются самыми молодыми
     for (const worker of workers) {
-      const age = worker.getAge();
+      const age = parseInt(worker.getAge());
+
       if (age < minAge) {
-        minAge = age;  // обновляем минимальный возраст и массив с работниками
+        minAge = age; // обновляем минимальный возраст и массив с работниками
         youngestWorkers = [worker]; // заменяем предыдущий массив с одним работником
       } else if (age === minAge) {
         youngestWorkers.push(worker);
@@ -93,10 +93,8 @@ class Worker extends Person {
     if (youngestWorkers.length === 1) {
       console.log(`${youngestWorkers[0].getFullName()} ${minAge} лет`);
     } else {
-      console.log(`Несколько работников имеют одинаковый наименьший возраст - ${minAge}:`);
-      for (const worker of youngestWorkers) {
-        console.log(`${worker.getFullName()} ${minAge} лет`);  // выводим имена работников с одинаковым максимальным количеством дней
-      }
+      const youngestWorker = youngestWorkers.map(worker => worker.getFullName())
+      console.log(`Несколько работников имеют одинаковый наименьший возраст - ${minAge}: ` + youngestWorker.join(', '));
     }
   }
 }
